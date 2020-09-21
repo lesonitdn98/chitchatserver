@@ -1,0 +1,330 @@
+swagger: '2.0'
+info:
+  description: chitchat is a realtime chat application developed by @lesonnnn
+  version: 1.0.0
+  title: ChitChat
+  termsOfService: http://leson.tech
+  contact:
+    email: lesonitdn98@gmail.com
+host: petstore.swagger.io
+basePath: /v1.0.0
+tags:
+- name: user
+  description: Operations about user
+  externalDocs:
+    description: Find out more
+    url: http://leson.tech
+schemes:
+- https
+paths:
+  /api/user:
+    post:
+      tags:
+      - user
+      summary: Create user
+      description: Register new account.
+      operationId: createUser
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: body
+        description: Created user object
+        required: true
+        schema:
+          $ref: '#/definitions/RegisterRequest'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        400:
+          description: Invalid username/password supplied
+    get:
+      tags:
+      - user
+      summary: Get user infomation 
+      operationId: infoUser
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Invalid username/password supplied
+      security:
+      - auth-token: []  
+  /api/user/login:
+    post:
+      tags:
+      - user
+      summary: Logs user into the system
+      operationId: loginUser
+      produces:
+      - application/json
+      parameters:
+      - name: body
+        in: body
+        description: The user name and password for login
+        required: true
+        type: object
+        schema:
+          $ref: '#/definitions/LoginRequest'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        400:
+          description: Invalid username/password supplied
+  /api/user/logout:
+    post:
+      tags:
+      - user
+      summary: Logs out current logged in user session
+      operationId: logoutUser
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        default:
+          description: successful operation
+      security:
+      - auth-token: []   
+  /api/user/update:
+    post:
+      tags:
+      - user
+      summary: Update full name
+      operationId: updatefull_name
+      produces:
+      - application/json
+  /api/user/{username}:
+    get:
+      tags:
+      - user
+      summary: Get user by user name
+      operationId: getUserByName
+      produces:
+      - application/json
+      parameters:
+      - name: username
+        in: path
+        description: The name that needs to be fetched. Use user1 for testing. 
+        required: true
+        type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Invalid username supplied
+        404:
+          description: User not found
+      security:
+      - auth-token: []
+    put:
+      tags:
+      - user
+      summary: Updated user
+      description: This can only be done by the logged in user.
+      operationId: updateUser
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: username
+        in: path
+        description: name that need to be updated
+        required: true
+        type: string
+      - in: body
+        name: body
+        description: Updated user object
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        400:
+          description: Invalid user supplied
+        404:
+          description: User not found
+      security:
+      - auth-token: []
+    delete:
+      tags:
+      - user
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: deleteUser
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: username
+        in: path
+        description: The name that needs to be deleted
+        required: true
+        type: string
+      responses:
+        400:
+          description: Invalid username supplied
+        404:
+          description: User not found
+      security:
+      - auth-token: []
+securityDefinitions:
+  auth-token:
+    type: apiKey
+    name: auth-token
+    in: header
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: string
+      username:
+        type: string
+      email:
+        $ref: "#/definitions/Email"
+      full_name:
+        type: string
+      gender:
+        type: string
+      dob:
+        $ref: "#/definitions/Dob"
+      bio:
+        type: string
+      phone:
+        $ref: "#/definitions/Phone"
+      avatar:
+        type: string
+      state:
+        type: integer
+        format: int32
+      created_at:
+        type: string
+  Email:
+    type: object
+    properties:
+      email_id:
+        type: string
+      email_address:
+        type: string
+      email_state:
+        type: integer
+        format: int32
+  Dob:
+    type: object
+    properties:
+      dob_id:
+        type: string
+      dob:
+        type: string
+      dob_state:
+        type: integer
+        format: int32
+  Phone:
+    type: object
+    properties:
+      phone_id:
+        type: string
+      phone_number:
+        type: string
+      phone_state:
+        type: integer
+        format: int32
+  RegisterRequest:
+    type: object
+    properties:
+      full_name:
+        type: string
+      phone_number:
+        type: string
+      password:
+        type: string
+  UserRequest:
+    type: object
+    properties:
+      username:
+        type: string
+      full_name:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      avatar:
+        type: string
+      gender:
+        type: string
+      phone:
+        type: string
+      dob:
+        type: string
+      bio:
+        type: string  
+      state:
+        type: integer
+        format: int32
+        description: User Status
+  UserResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      username:
+        type: string
+      full_name:
+        type: string
+      email:
+        type: string
+      avatar:
+        type: string
+      gender:
+        type: string  
+      phone:
+        type: string
+      dob:
+        type: string
+      bio:
+        type: string  
+      state:
+        type: integer
+        format: int32
+        description: User Status
+  LoginRequest:
+    type: object
+    properties:
+      phone_number:
+        type: string
+      password:
+        type: string
+  LoginResponse:
+    type: object
+    properties:
+      id:
+        type: string
+      token:
+        type: string
+      username:
+        type: string   
+      avatar:
+        type: string
+  ApiResponse:
+    type: object
+    properties:
+      status:
+        type: integer
+        format: int32
+      message:
+        type: string  
+externalDocs:
+  description: Find out more about ChitChat
+  url: http://leson.tech
+  
