@@ -14,8 +14,22 @@ app.set("view engine", "ejs");
 app.set("views", "./views");
 
 const server = require("http").Server(app);
-const port = 80;
-server.listen(port, () => console.log('Server running...'));
+server.listen(80, () => console.log('Server running...'));
+
+// connect(io);
+// connect(iohttps);
+
+const port = process.env.PORT || 443;
+https.createServer({
+  key: fs.readFileSync('./ssl/private.key'),
+  cert: fs.readFileSync('./ssl/certificate.crt'),
+  ca: [
+    fs.readFileSync('./ssl/ca_bundle.crt')
+  ]
+  //passphrase: 'abcd'
+}, app)
+  .listen(port);
+
 
 // Document
 const swaggerOptions = {
