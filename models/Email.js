@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const EmailSchema = new Schema({
     email_address: {
         type: String,
-        default: ""
+        default: "Unknown"
     },
     email_state: {
         type: Number,

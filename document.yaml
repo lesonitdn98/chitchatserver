@@ -102,6 +102,44 @@ paths:
       operationId: updatefull_name
       produces:
       - application/json
+      parameters:
+      - name: body
+        in: body
+        description: The user infomation for update.
+        type: object
+        schema:
+          $ref: '#/definitions/UpdateRequest'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/User'
+        400:
+          description: Invalid username/password supplied
+      security:
+      - auth-token: [] 
+  /api/user/password:
+    post:
+      tags:
+      - user
+      summary: Change password
+      operationId: changePass
+      produces:
+      - application/json
+      properties:
+      - name: body
+        in: body
+        description: The user password for update.
+        type: object
+        schema:
+          $ref: '#/definitions/PasswordRequest'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/LoginResponse'
+        400:
+          description: Invalid username/password supplied
   /api/user/{username}:
     get:
       tags:
@@ -248,56 +286,6 @@ definitions:
         type: string
       password:
         type: string
-  UserRequest:
-    type: object
-    properties:
-      username:
-        type: string
-      full_name:
-        type: string
-      email:
-        type: string
-      password:
-        type: string
-      avatar:
-        type: string
-      gender:
-        type: string
-      phone:
-        type: string
-      dob:
-        type: string
-      bio:
-        type: string  
-      state:
-        type: integer
-        format: int32
-        description: User Status
-  UserResponse:
-    type: object
-    properties:
-      id:
-        type: string
-      username:
-        type: string
-      full_name:
-        type: string
-      email:
-        type: string
-      avatar:
-        type: string
-      gender:
-        type: string  
-      phone:
-        type: string
-      dob:
-        type: string
-      bio:
-        type: string  
-      state:
-        type: integer
-        format: int32
-        description: User Status
   LoginRequest:
     type: object
     properties:
@@ -315,6 +303,35 @@ definitions:
       username:
         type: string   
       avatar:
+        type: string
+  UpdateRequest:
+    type: object
+    properties:
+      full_name:
+        type: string
+      gender:
+        type: string
+      date_of_birth:
+        type: integer
+        format: int64
+      dob_state:
+        type: integer
+        format: int32
+      email_address:
+        type: string
+      email_state:
+        type: integer
+        format: int32
+      bio:
+        type: string
+      avatar:
+        type: string
+  PasswordRequest:
+    type: object
+    properties:
+      password:
+        type: string
+      new_password:
         type: string
   ApiResponse:
     type: object

@@ -44,7 +44,7 @@ const swaggerOptions = {
                 name: ': lesonitdn98@gmail.com',
                 email: 'lesonitdn98@gmail.com'
             },
-            servers: 'http://localhost',
+            servers: 'https://leson.tech',
         }
     },
     apis: ["document.yaml"]

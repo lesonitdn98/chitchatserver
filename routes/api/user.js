@@ -259,7 +259,7 @@ router.get("/", authMiddleware, (req, res) => {
 router.post("/update", authMiddleware, (req, res) => {
 
   var condition = { _id: req.user.id };
-  let {full_name, gender, date_of_birth, dob_state, email_address, email_state, phone_number, phone_state, bio, avatar} = req.body;
+  let {full_name, gender, date_of_birth, dob_state, email_address, email_state, bio, avatar} = req.body;
 
   User.findOne(condition).then(user => {
     if(!user) {
@@ -291,12 +291,6 @@ router.post("/update", authMiddleware, (req, res) => {
     }
     if (email_state) {
       Email.findOneAndUpdate({_id: user.email}, {$set:{email_state}}).then();
-    }
-    if (phone_number) {
-      Email.findOneAndUpdate({_id: user.phone}, {$set:{phone_number}}).then();
-    }
-    if (phone_state) {
-      Email.findOneAndUpdate({_id: user.phone}, {$set:{phone_state}}).then();
     }
     Dob.findOne({_id: user.dob}).then(dob => {
       Email.findOne({_id: user.email}).then(email => {
