@@ -56,7 +56,7 @@ app.use("/document", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 // Connect to MongoDB
 mongoose
   .connect(
-    'mongodb://mongo:27017/chitchat-server', // mongodb://localhost:27017/chitchat-server
+    'mongodb://localhost:27017/chitchat-server', // mongodb://mongo:27017/chitchat-server
     { useNewUrlParser: true }
   )
   .then(() => console.log('MongoDB Connected'))
