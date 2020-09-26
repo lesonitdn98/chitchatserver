@@ -95,10 +95,10 @@ paths:
       security:
       - auth-token: []   
   /api/user/update:
-    post:
+    put:
       tags:
       - user
-      summary: Update full name
+      summary: Update user's infomation
       operationId: updatefull_name
       produces:
       - application/json
@@ -119,17 +119,18 @@ paths:
       security:
       - auth-token: [] 
   /api/user/password:
-    post:
+    put:
       tags:
       - user
       summary: Change password
       operationId: changePass
       produces:
       - application/json
-      properties:
+      parameters:
       - name: body
         in: body
         description: The user password for update.
+        required: true
         type: object
         schema:
           $ref: '#/definitions/PasswordRequest'
@@ -140,6 +141,8 @@ paths:
             $ref: '#/definitions/LoginResponse'
         400:
           description: Invalid username/password supplied
+      security:
+      - auth-token: [] 
   /api/user/{username}:
     get:
       tags:

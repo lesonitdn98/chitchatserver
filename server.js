@@ -11,7 +11,8 @@ const swaggerUi = require('swagger-ui-express');
 
 var app = express();
 
-app.use(express.static('public'));
+var path=require('path');
+app.use("/public", express.static(path.join(__dirname,'public')));
 app.set("view engine", "ejs");
 app.set("views", "./views");
 

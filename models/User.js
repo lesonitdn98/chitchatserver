@@ -20,7 +20,7 @@ const UserSchema = new Schema({
     },
     gender: {
         type: String,
-        default: "Unknown"
+        default: ""
     },
     dob: {
         type: Schema.Types.ObjectId

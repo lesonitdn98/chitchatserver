@@ -74,7 +74,8 @@ router.post("/", (req, res) => {
                         password,
                         username,
                         email,
-                        dob
+                        dob,
+                        avatar: "https://leson.tech/public/avatar/avatar_1.png"
                     });
                     createUser(res, newUser);
                 })
@@ -256,7 +257,7 @@ router.get("/", authMiddleware, (req, res) => {
 // @route POST api/user/update
 // @desc Update User Info
 // @access Public
-router.post("/update", authMiddleware, (req, res) => {
+router.put("/update", authMiddleware, (req, res) => {
 
   var condition = { _id: req.user.id };
   let {full_name, gender, date_of_birth, dob_state, email_address, email_state, bio, avatar} = req.body;
@@ -292,41 +293,11 @@ router.post("/update", authMiddleware, (req, res) => {
     if (email_state) {
       Email.findOneAndUpdate({_id: user.email}, {$set:{email_state}}).then();
     }
-    Dob.findOne({_id: user.dob}).then(dob => {
-      Email.findOne({_id: user.email}).then(email => {
-        Phone.findOne({_id: user.phone}).then(phone => {
-          res.status(200)
-            .json({
-              status: 200,
-              user: {
-                id: user._id,
-                username: user.username,
-                full_name: user.full_name,
-                email: {
-                  email_id: email._id,
-                  email_address: email.email_address,
-                  email_state: email.email_state
-                },
-                phone: {
-                  phone_id: phone._id,
-                  phone_number: phone.phone_number,
-                  phone_state: phone.phone_state
-                },
-                dob: {
-                  dob_id: dob._id,
-                  date_of_birth: dob.date_of_birth,
-                  dob_state: dob.dob_state
-                },
-                gender: user.gender,
-                bio: user.bio,
-                avatar: user.avatar,
-                state: user.state,
-                created_at: user.created_at
-              }
-            });
-        })
-      })
-    })
+    res.status(200)
+      .json({
+        status: 200,
+        msg: "Success" 
+      });
   })
   
 });
@@ -334,7 +305,7 @@ router.post("/update", authMiddleware, (req, res) => {
 // @route POST api/user/password
 // @desc Reset User Password
 // @access Public
-router.post("/password", authMiddleware, (req, res) => {
+router.put("/password", authMiddleware, (req, res) => {
   const token = req.header("auth-token");
   const condition = { _id: req.user.id };
   let {password, new_password} = req.body;
