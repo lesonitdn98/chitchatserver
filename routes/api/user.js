@@ -49,7 +49,7 @@ router.post("/", (req, res) => {
 
     User.findOne({username}).then(user => {
         if (user) {
-            username = username.concat(randomInt(10, 1000));
+            username = username.concat(randomInt(1000, 100000));
         }
     });
 
@@ -254,7 +254,44 @@ router.get("/", authMiddleware, (req, res) => {
   });
 });
 
-// @route POST api/user/update
+// @route POST api/user/search
+// @desc Search
+// @access Public
+router.post("/search", authMiddleware, (req, res) => {
+  let {username} = req.body;
+
+  if (!username) {
+    return res.status(400).json({
+      status: 400,
+      msg: "Invalid search field supplied!"
+    })
+  }
+  let reg = new RegExp(username);
+  User.find({username: { $regex: reg, $options: "gmi" }}).select(
+    'username avatar full_name'
+  ).then(docs => {
+    if (!docs) {
+      return res.status(400).json({
+        status: 400,
+        msg: "Username not found!"
+      })
+    }
+
+    let users = []
+    for (const user in docs) {
+      users.push({full_name: docs[user].full_name, username: docs[user].username, avatar: docs[user].avatar})
+    }
+
+    return res.status(200)
+      .json({
+        status: 200,
+        users
+    });
+  })
+  
+})
+
+// @route PUT api/user/update
 // @desc Update User Info
 // @access Public
 router.put("/update", authMiddleware, (req, res) => {
@@ -302,7 +339,59 @@ router.put("/update", authMiddleware, (req, res) => {
   
 });
 
-// @route POST api/user/password
+// @route PUT api/user/username
+// @desc Update User Name
+// @access Public
+router.put("/username", authMiddleware, (req, res) => {
+  const condition = { _id: req.user.id };
+  let {username} = req.body;
+
+  //Simple validation
+  var pattern = new RegExp(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/);
+
+  if (!username) {
+    return res.status(400).json({
+      status: 400,
+      msg: "Please enter username!"
+    });
+  } else if (username.indexOf(' ') >= 0) {
+    return res.status(400).json({
+      status: 400,
+      msg: "Username is invalid!"
+    });
+  } else if( pattern.test( username ) ){
+    return res.status(400).json({
+      status: 400,
+      msg: "Username is invalid!"
+    });
+  }
+
+  User.findOne({username: username}).then(user => {
+    if (user) {
+      return res.status(400).json({
+        status: 400,
+        msg: "Username already exists"
+      });
+    }
+    User.findOneAndUpdate(condition, {$set:{username}}, {new: true}, (err, user) => {
+      if (err) {
+        return res.status(400).json({
+          status: 400,
+          msg: "Update username fail"
+        });
+      }
+      res.status(200)
+          .json({
+            status: 200,
+            user: {
+              username: user.username
+          }
+      });
+    })
+  })
+})
+
+// @route PUT api/user/password
 // @desc Reset User Password
 // @access Public
 router.put("/password", authMiddleware, (req, res) => {
@@ -384,6 +473,84 @@ router.post("/logout", authMiddleware, (req, res) => {
       status: 200,
       msg: "Logout success"
   });
+})
+
+// @route GET api/user/{username}
+// @desc Get User Infomation
+// @access Public
+router.get('/:username', authMiddleware, (req, res) => {
+  const {username} = req.params;
+  console.log("Username: " ,username);
+
+  //Simple validation
+  var pattern = new RegExp(/[~`@!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/);
+
+  if (!username) {
+    return res.status(400).json({
+      status: 400,
+      msg: "Please enter username!"
+    });
+  } else if (username.indexOf(' ') >= 0) {
+    return res.status(400).json({
+      status: 400,
+      msg: "Username is invalid!"
+    });
+  } else if( pattern.test( username ) ){
+    return res.status(400).json({
+      status: 400,
+      msg: "Username is invalid!"
+    });
+  }
+
+  var phoneState = 2;
+  var emailState = 2;
+  var dobState = 2;
+
+  User.findOne({username: username}).select('-password').then(user => {
+    if(!user) {
+      return res.status(400).json({
+        status: 400,
+        msg: "User is not exists!"
+      });
+    };
+    Phone.findOne({_id: user.phone, phone_state: phoneState}).then(phone => {
+      if (!phone) {
+        phone = {phone_number: ""};
+      }
+      Email.findOne({_id: user.email, email_state: emailState}).then(email => {
+        if (!email) {
+          email = {email_address: ""};
+        }
+        Dob.findOne({_id: user.dob, dob_state: dobState}).then(dob => {
+          if(!dob) {
+            dob = {date_of_birth: ""};
+          }
+          return res.status(200)
+                .json({
+                  status: 200,
+                  user: {
+                    username: user.username,
+                    full_name: user.full_name,
+                    email: {
+                      email_address: email.email_address
+                    },
+                    phone: {
+                      phone_number: phone.phone_number
+                    },
+                    dob: {
+                      date_of_birth: dob.date_of_birth
+                    },
+                    gender: user.gender,
+                    bio: user.bio,
+                    avatar: user.avatar,
+                    state: user.state,
+                    created_at: user.created_at
+                  }
+                });
+        })
+      })
+    })
+  })
 })
 
 module.exports = router;

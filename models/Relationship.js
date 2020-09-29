@@ -6,13 +6,17 @@ const RelationshipSchema = new Schema({
         type: Schema.Types.ObjectId,
         required: true
     },
-    user_id: {
+    person_name: {
         type: Schema.Types.ObjectId,
         required: true
     },
     relationship: {
         type: Number,
         default: 0
+    },
+    isOnline: {
+        type: Boolean,
+        default: false
     }
 })
 

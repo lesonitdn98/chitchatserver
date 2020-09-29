@@ -118,6 +118,31 @@ paths:
           description: Invalid username/password supplied
       security:
       - auth-token: [] 
+  /api/user/username:
+    put:
+      tags:
+      - user
+      summary: Change username
+      operationId: changeUsername
+      produces:
+      - application/json
+      parameters:
+      - name: body
+        in: body
+        description: The username for update.
+        required: true
+        type: object
+        schema:
+          $ref: '#/definitions/UsernameRequest'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/UsernameRequest'
+        400:
+          description: Invalid username/password supplied
+      security:
+      - auth-token: []
   /api/user/password:
     put:
       tags:
@@ -143,6 +168,31 @@ paths:
           description: Invalid username/password supplied
       security:
       - auth-token: [] 
+  /api/user/search:
+    post:
+      tags:
+      - user
+      summary: Search user from username
+      operationId: searchUser
+      produces:
+      - application/json
+      parameters:
+      - name: body
+        in: body
+        description: The username for searching.
+        required: true
+        type: object
+        schema:
+          $ref: '#/definitions/UsernameRequest'
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/SearchUsersResponse'
+        400:
+          description: Invalid search field supplied
+      security:
+      - auth-token: []
   /api/user/{username}:
     get:
       tags:
@@ -162,56 +212,6 @@ paths:
           description: successful operation
           schema:
             $ref: '#/definitions/User'
-        400:
-          description: Invalid username supplied
-        404:
-          description: User not found
-      security:
-      - auth-token: []
-    put:
-      tags:
-      - user
-      summary: Updated user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      produces:
-      - application/json
-      - application/xml
-      parameters:
-      - name: username
-        in: path
-        description: name that need to be updated
-        required: true
-        type: string
-      - in: body
-        name: body
-        description: Updated user object
-        required: true
-        schema:
-          $ref: '#/definitions/User'
-      responses:
-        400:
-          description: Invalid user supplied
-        404:
-          description: User not found
-      security:
-      - auth-token: []
-    delete:
-      tags:
-      - user
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      produces:
-      - application/json
-      - application/xml
-      parameters:
-      - name: username
-        in: path
-        description: The name that needs to be deleted
-        required: true
-        type: string
-      responses:
         400:
           description: Invalid username supplied
         404:
@@ -336,6 +336,25 @@ definitions:
         type: string
       new_password:
         type: string
+  UsernameRequest:
+    type: object
+    properties:
+      username:
+        type: string
+  SearchUserResponse:
+    type: object
+    properties:
+      full_name:
+        type: string
+      username:
+        type: string
+      avatar:
+        type: string
+  SearchUsersResponse:
+    type: object 
+    properties:
+      users:
+        $ref: "#/definitions/SearchUserResponse"  
   ApiResponse:
     type: object
     properties:
